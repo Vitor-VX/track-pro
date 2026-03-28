@@ -20,7 +20,7 @@
       <div class="logo-icon">
         <BarChart3 size={24} />
       </div>
-      <span class="logo-text">TrackPro</span>
+      <span class="logo-text">TrackyFlow</span>
     </div>
     <button class="close-btn" onclick={closeSidebar}>
       <X size={20} />

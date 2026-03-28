@@ -12,7 +12,7 @@
   let { site, onDelete }: Props = $props();
   
   function copyScript() {
-    const script = `<script src="https://cdn.trackpro.io/tracker.js" data-site-id="${site.id}"><\/script>`;
+    const script = `<script src="https://trackyflow.sbs/api/v1/script/tracker.js" data-site-id="${site.id}"><\/script>`;
     navigator.clipboard.writeText(script);
     addToast('Script copiado com sucesso!', 'success');
   }

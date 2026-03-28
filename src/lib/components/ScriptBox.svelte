@@ -10,7 +10,7 @@
   
   let copied = $state(false);
   
-  const script = `<script src="https://cdn.trackpro.io/tracker.js" data-site-id="${siteId}"><\/script>`;
+  const script = `<script src="https://trackyflow.sbs/api/v1/script/tracker.js" data-site-id="${siteId}"><\/script>`;
   
   function copyScript() {
     navigator.clipboard.writeText(script);

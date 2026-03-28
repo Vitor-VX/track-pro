@@ -1,9 +1,10 @@
 import { type Handle } from "@sveltejs/kit";
+import { PUBLIC_URL_API } from "$env/static/public";
 
 export const handle: Handle = async ({ event, resolve }) => {
     const token = event.cookies.get("access_token");
 
-    const res = await fetch("http://localhost:4000/api/v1/users/me", {
+    const res = await fetch(`${PUBLIC_URL_API}/api/v1/users/me`, {
         headers: {
             "Authorization": `Bearer ${token}`
         },

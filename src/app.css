@@ -108,7 +108,8 @@ select {
   font-weight: 600;
 }
 
-/* Layout */
+/* ─── Layout ─────────────────────────────────────────── */
+
 .app-layout {
   display: flex;
   min-height: 100vh;
@@ -116,19 +117,24 @@ select {
 
 .main-content {
   flex: 1;
+  min-width: 0;
   margin-left: var(--sidebar-width);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 .page-content {
   flex: 1;
   padding: 32px;
   padding-top: calc(var(--header-height) + 32px);
+  min-width: 0;
+  overflow-x: hidden;
 }
 
-/* Cards */
+/* ─── Cards ───────────────────────────────────────────── */
+
 .card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -136,6 +142,7 @@ select {
   padding: 20px;
   box-shadow: var(--shadow-sm);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-width: 0;
 }
 
 .card:hover {
@@ -146,7 +153,8 @@ select {
   background: var(--card-2);
 }
 
-/* Buttons */
+/* ─── Buttons ─────────────────────────────────────────── */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -210,7 +218,8 @@ select {
   height: 40px;
 }
 
-/* Inputs */
+/* ─── Inputs ──────────────────────────────────────────── */
+
 .input {
   width: 100%;
   padding: 14px 18px;
@@ -244,7 +253,8 @@ select {
   color: var(--text);
 }
 
-/* Badges */
+/* ─── Badges ──────────────────────────────────────────── */
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -280,7 +290,8 @@ select {
   color: var(--muted);
 }
 
-/* Tables */
+/* ─── Tables ──────────────────────────────────────────── */
+
 .table-container {
   overflow-x: auto;
   border-radius: var(--radius);
@@ -319,7 +330,8 @@ select {
   background: var(--card-2);
 }
 
-/* Grid */
+/* ─── Grid ────────────────────────────────────────────── */
+
 .grid {
   display: grid;
   gap: 24px;
@@ -341,7 +353,8 @@ select {
   grid-template-columns: repeat(6, 1fr);
 }
 
-/* Skeleton */
+/* ─── Skeleton ────────────────────────────────────────── */
+
 .skeleton {
   background: linear-gradient(90deg,
       var(--card) 25%,
@@ -362,7 +375,8 @@ select {
   }
 }
 
-/* Empty State */
+/* ─── Empty State ─────────────────────────────────────── */
+
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -395,7 +409,8 @@ select {
   margin-bottom: 24px;
 }
 
-/* Modal */
+/* ─── Modal ───────────────────────────────────────────── */
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -438,7 +453,28 @@ select {
   gap: 12px;
 }
 
-/* Responsive */
+/* ─── Scrollbar ───────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--card);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--card-2);
+}
+
+/* ─── Responsive ──────────────────────────────────────── */
+
 @media (max-width: 1280px) {
   .grid-6 {
     grid-template-columns: repeat(3, 1fr);
@@ -479,26 +515,8 @@ select {
   }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+/* ─── Utilities ───────────────────────────────────────── */
 
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--card);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--card-2);
-}
-
-/* Utilities */
 .text-muted {
   color: var(--muted);
 }

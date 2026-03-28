@@ -12,7 +12,7 @@
 </script>
 
 <svelte:head>
-  <title>TrackPro - Analytics & Tracking</title>
+  <title>TrackyFlow - Analytics & Tracking</title>
   <meta
     name="description"
     content="Sistema de tracking e analytics para landing pages e campanhas Meta Ads"

@@ -1,11 +1,13 @@
+import { PUBLIC_URL_API } from "$env/static/public";
+
 export const load = async ({ fetch, cookies }: any) => {
     const token = cookies.get("access_token");
-    const res = await fetch("http://localhost:4000/api/v1/metrics/overview", {
+    const res = await fetch(`${PUBLIC_URL_API}/api/v1/metrics/overview`, {
         headers: {
             "Authorization": `Bearer ${token}`
         },
         method: "GET"
-    });    
+    });
 
     if (!res.ok) {
         return {

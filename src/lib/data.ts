@@ -43,19 +43,19 @@ export const sites: Site[] = [
   //   lastUpdated: '2024-01-15T14:20:00Z',
   //   description: 'Curso de trading avançado'
   // },
-  // {
-  //   id: 'site_004',
-  //   name: 'Curso Premium X',
-  //   url: 'https://cursopremiumx.com.br',
-  //   status: 'inactive',
-  //   metaConnected: false,
-  //   visitorsToday: 0,
-  //   salesToday: 0,
-  //   revenueToday: 0,
-  //   campaignsActive: 0,
-  //   lastUpdated: '2024-01-10T10:00:00Z',
-  //   description: 'Curso em manutenção'
-  // }
+  {
+    id: 'site_004',
+    name: 'Curso Premium X',
+    url: 'https://cursopremiumx.com.br',
+    status: 'inactive',
+    metaConnected: false,
+    visitorsToday: 0,
+    salesToday: 0,
+    revenueToday: 0,
+    campaignsActive: 0,
+    lastUpdated: '2024-01-10T10:00:00Z',
+    description: 'Curso em manutenção'
+  }
 ];
 
 export const campaigns: Campaign[] = [

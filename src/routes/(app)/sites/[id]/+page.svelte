@@ -9,10 +9,6 @@
   import ScriptBox from "$lib/components/ScriptBox.svelte";
   import EmptyState from "$lib/components/EmptyState.svelte";
   import {
-    sites,
-    getSiteMetrics,
-    getFunnelData,
-    getChartData,
     getCampaignsBySite,
     getMetaIntegration,
     getTrafficSources,
@@ -34,7 +30,6 @@
     ShoppingBag,
     RefreshCw,
     Filter,
-    Calendar,
     Copy,
     Activity,
     Download,
@@ -70,6 +65,7 @@
       scroll_25: "Scroll 25%",
       scroll_50: "Scroll 50%",
       scroll_75: "Scroll 75%",
+      scroll_100: "Scroll 100%",
       cta_click: "Clique CTA",
       checkout_start: "Checkout",
       purchase: "Compra",
@@ -100,9 +96,12 @@
   const chartData = formatChartData(data.chart);
   const site = data.site;
   const funnel = data.funnel;
+  const source = data.source;
+
+  // console.log(source);
 
   // console.log(metrics);
-  // console.log(chartData);
+  console.log(chartData);
   // console.log(site);
   // console.log(behavior);
   // console.log(funnel);
@@ -130,7 +129,7 @@
   ]);
 
   function copyScript() {
-    const script = `<script src="https://cdn.trackpro.io/tracker.js" data-site-id="${siteId}"><\/script>`;
+    const script = `<script src="https://trackyflow.sbs/api/v1/script/tracker.js" data-site-id="${siteId}"><\/script>`;
     navigator.clipboard.writeText(script);
     addToast("Script copiado!", "success");
   }
@@ -294,7 +293,7 @@
         />
         <MetricCard
           title="Scroll Médio"
-          value={behavior.averageScrollEvents + "%"}
+          value={behavior.scrollRate + "%"}
           change={2.1}
           icon={Activity}
           iconColor="#8b5cf6"
@@ -322,7 +321,7 @@
         />
         <MetricCard
           title="Abandono Checkout"
-          value={formatNumber(behavior.checkoutAbandonment)}
+          value={formatNumber(behavior.checkoutAbandonment) + "%"}
           change={-8.2}
           icon={ShoppingCart}
           iconColor="#ef4444"
@@ -342,7 +341,6 @@
       </div>
     </section>
 
-    <!-- Facebook Ads Campaigns -->
     <section class="campaigns-section">
       <div class="section-header">
         <h3 class="section-title">Campanhas Facebook Ads</h3>
@@ -435,22 +433,24 @@
       <div class="card">
         <h3 class="section-title">Origem do Tráfego</h3>
         <div class="traffic-list">
-          {#each trafficSources as source}
+          {#each source as s}
             <div class="traffic-item">
               <div class="traffic-info">
-                <span class="traffic-name">{source.source}</span>
-                <span class="traffic-percentage">{source.percentage}%</span>
+                <span class="traffic-name">{s.source}</span>
+                <span class="traffic-percentage"
+                  >{s.visitsPercent.toFixed(1)}%</span
+                >
               </div>
               <div class="traffic-bar">
                 <div
                   class="traffic-fill"
-                  style="width: {source.percentage}%"
+                  style="width: {s.visitsPercent}%"
                 ></div>
               </div>
               <div class="traffic-stats">
-                <span>{formatNumber(source.visits)} visitas</span>
-                <span>{formatNumber(source.sales)} vendas</span>
-                <span>{formatCurrency(source.revenue)}</span>
+                <span>{formatNumber(s.visits)} visitas</span>
+                <span>{formatNumber(s.sales)} vendas</span>
+                <span>{formatCurrency(s.revenue)}</span>
               </div>
             </div>
           {/each}
@@ -577,8 +577,7 @@
   }
 
   .card-funnel {
-    background-color: red;
-    /* background: var(--card); */
+    background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;

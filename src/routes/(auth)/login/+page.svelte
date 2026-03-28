@@ -2,6 +2,7 @@
     import { goto, invalidateAll } from "$app/navigation";
     import { BarChart3, Mail, Lock, Loader2 } from "lucide-svelte";
     import { apiRequest } from "$lib/utils/request";
+    import { PUBLIC_URL_API } from "$env/static/public";
 
     let email = $state("");
     let password = $state("");
@@ -21,7 +22,7 @@
 
         try {
             const data = await apiRequest(
-                "http://localhost:4000/api/v1/auth/login",
+                `${PUBLIC_URL_API}/api/v1/auth/login`,
                 {
                     method: "POST",
                     credentials: "include",
@@ -63,7 +64,7 @@
                 <div class="logo-icon">
                     <BarChart3 size={28} />
                 </div>
-                <span class="logo-text">TrackPro</span>
+                <span class="logo-text">TrackyFlow</span>
             </div>
             <h1 class="login-title">Bem-vindo de volta</h1>
             <p class="login-subtitle">Acesse sua conta para continuar</p>
@@ -124,7 +125,7 @@
     </div>
 
     <div class="login-footer">
-        <p>TrackPro Analytics - Todos os direitos reservados</p>
+        <p>TrackyFlow Analytics - Todos os direitos reservados</p>
     </div>
 </div>
 
