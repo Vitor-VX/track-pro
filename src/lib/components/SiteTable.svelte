@@ -8,8 +8,6 @@
   }
   
   let { sites }: Props = $props();
-  console.log(sites);
-  
 </script>
 
 <div class="table-container">
@@ -21,7 +19,7 @@
         <th>Vendas</th>
         <th>Faturamento</th>
         <th>Conversão</th>
-        <th>Campanhas</th>
+        <!-- <th>Campanhas</th> -->
         <th>Integração</th>
         <th></th>
       </tr>
@@ -52,11 +50,11 @@
               {site.totalVisitors > 0 ? ((site.sales / site.totalVisitors) * 100).toFixed(2) : 0.00}%
             </span>
           </td>
-          <td>
+          <!-- <td>
             <span class="badge badge-primary">{site.campaignsActive} ativas</span>
-          </td>
+          </td> -->
           <td>
-            {#if site.metaConnected}
+            {#if site.integrationConnected}
               <span class="badge badge-success">
                 <PlugZap size={12} />
                 Conectado

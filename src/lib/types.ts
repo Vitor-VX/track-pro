@@ -4,7 +4,7 @@ export type Site = {
   domain: string;
   status: 'active' | 'inactive';
   pixelId?: string;
-  metaConnected: boolean;
+  integrationConnected: boolean;
   totalVisitors: number;
   sales: number;
   revenue: number;

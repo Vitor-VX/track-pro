@@ -5,7 +5,7 @@
   
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: Home },
-    { href: '/sites', label: 'Sites', icon: Globe },
+    // { href: '/sites', label: 'Sites', icon: Globe },
     { href: '/settings', label: 'Configurações', icon: Settings }
   ];
   

@@ -8,14 +8,7 @@
   import CampaignTable from "$lib/components/CampaignTable.svelte";
   import ScriptBox from "$lib/components/ScriptBox.svelte";
   import EmptyState from "$lib/components/EmptyState.svelte";
-  import {
-    getCampaignsBySite,
-    getMetaIntegration,
-    getTrafficSources,
-    formatCurrency,
-    formatNumber,
-    formatPercentage,
-  } from "$lib/data";
+  import { formatCurrency, formatNumber, formatPercentage } from "$lib/data";
   import { addToast } from "$lib/stores";
   import {
     Users,
@@ -38,7 +31,6 @@
     DollarSign,
     Target,
     Eye,
-    BarChart3,
     ExternalLink,
   } from "lucide-svelte";
   import { formatDate } from "$lib/utils/formatDate.js";
@@ -49,12 +41,11 @@
 
   function formatChartData(rawData: any[]): ChartDataPoint[] {
     if (!rawData) return [];
-    const data = rawData.map((item) => ({
+    return rawData.map((item) => ({
       date: formatDate(item.date),
       visits: Number(item.visits) || 0,
       sales: Number(item.sales) || 0,
     }));
-    return data;
   }
 
   export function formatFunnelData(data: any[]): any[] {
@@ -73,7 +64,6 @@
 
     return data.map((item, index) => {
       const prev = data[index - 1];
-
       const dropRate =
         index === 0 || !prev?.count
           ? 0
@@ -88,38 +78,32 @@
     });
   }
 
-  const metrics = {
-    ...data.metrics,
-    sales: data.metrics.conversions,
-  };
+  const metrics = { ...data.metrics, sales: data.metrics.conversions };
   const behavior = data.behavior;
   const chartData = formatChartData(data.chart);
   const site = data.site;
   const funnel = data.funnel;
   const source = data.source;
+  const campaigns = Array.isArray(data.campaigns) ? data.campaigns : [];
+  const metaSummary = data.metaSummary || null;
 
-  // console.log(source);
+  const metaIntegration = $derived(
+    site?.integrations?.find(
+      (i: any) => i.provider === "meta" && i.connected,
+    ) || null,
+  );
 
-  // console.log(metrics);
-  console.log(chartData);
-  // console.log(site);
-  // console.log(behavior);
-  // console.log(funnel);
-
-  // const metrics = $derived(getSiteMetrics(siteId));
   const funnelData = $derived(formatFunnelData(funnel));
-  const campaigns = $derived(getCampaignsBySite("siteId"));
-  const metaIntegration = $derived(getMetaIntegration("siteId"));
-  const trafficSources = $derived(getTrafficSources("siteId"));
 
   const activeCampaigns = $derived(
-    campaigns.filter((c) => c.status === "active"),
+    campaigns.filter((c: any) => c.status === "active"),
   );
-  const totalSpend = $derived(campaigns.reduce((sum, c) => sum + c.spend, 0));
+  const totalSpend = $derived(
+    campaigns.reduce((sum: number, c: any) => sum + c.spend, 0),
+  );
   const totalRevenue = $derived(
-    campaigns.reduce((sum, c) => sum + c.revenue, 0),
+    campaigns.reduce((sum: number, c: any) => sum + c.revenue, 0),
   );
-  const totalSales = $derived(campaigns.reduce((sum, c) => sum + c.sales, 0));
   const overallROI = $derived(totalSpend > 0 ? totalRevenue / totalSpend : 0);
 
   const funnelInsights = $derived([
@@ -198,24 +182,12 @@
         </div>
         <div class="meta-details">
           <div class="meta-item">
-            <span class="meta-label">Pixel ID</span>
-            <span class="meta-value">{metaIntegration.pixelId}</span>
-          </div>
-          <div class="meta-item">
             <span class="meta-label">Conta de Anúncios</span>
-            <span class="meta-value">{metaIntegration.adAccountId}</span>
+            <span class="meta-value">{metaIntegration.accountId}</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Campanhas Sincronizadas</span>
-            <span class="meta-value">{metaIntegration.campaignsSynced}</span>
-          </div>
-          <div class="meta-item">
-            <span class="meta-label">Última Sincronização</span>
-            <span class="meta-value"
-              >{new Date(metaIntegration.lastSync).toLocaleString(
-                "pt-BR",
-              )}</span
-            >
+            <span class="meta-label">Provider</span>
+            <span class="meta-value">{metaIntegration.provider}</span>
           </div>
         </div>
       </section>
@@ -226,7 +198,9 @@
           title="Meta não conectado"
           description="Conecte sua conta Meta Ads para visualizar métricas de campanhas em tempo real."
           actionLabel="Conectar Meta"
-          onAction={() => addToast("Função em desenvolvimento", "info")}
+          onAction={() => {
+            window.location.href = `https://api.trackyflow.sbs/api/v1/meta/connect?site_id=${siteId}`;
+          }}
         />
       </section>
     {/if}
@@ -356,66 +330,79 @@
         </div>
       </div>
 
-      <!-- Campaign Summary Cards -->
-      <div class="grid grid-4 mb-6">
-        <div class="summary-card card-2">
-          <div
-            class="summary-icon"
-            style="background: var(--primary-soft); color: var(--primary)"
-          >
-            <Megaphone size={20} />
+      {#if metaIntegration}
+        <div class="grid grid-4 mb-6">
+          <div class="summary-card card-2">
+            <div
+              class="summary-icon"
+              style="background: var(--primary-soft); color: var(--primary)"
+            >
+              <Megaphone size={20} />
+            </div>
+            <div class="summary-data">
+              <span class="summary-value">{activeCampaigns.length}</span>
+              <span class="summary-label">Campanhas Ativas</span>
+            </div>
           </div>
-          <div class="summary-data">
-            <span class="summary-value">{activeCampaigns.length}</span>
-            <span class="summary-label">Campanhas Ativas</span>
+          <div class="summary-card card-2">
+            <div
+              class="summary-icon"
+              style="background: var(--danger-soft); color: var(--danger)"
+            >
+              <DollarSign size={20} />
+            </div>
+            <div class="summary-data">
+              <span class="summary-value">{formatCurrency(totalSpend)}</span>
+              <span class="summary-label">Investimento</span>
+            </div>
+          </div>
+          <div class="summary-card card-2">
+            <div
+              class="summary-icon"
+              style="background: var(--success-soft); color: var(--success)"
+            >
+              <BadgeDollarSign size={20} />
+            </div>
+            <div class="summary-data">
+              <span class="summary-value">{formatCurrency(totalRevenue)}</span>
+              <span class="summary-label">Receita</span>
+            </div>
+          </div>
+          <div class="summary-card card-2">
+            <div
+              class="summary-icon"
+              style="background: var(--warning-soft); color: var(--warning)"
+            >
+              <Target size={20} />
+            </div>
+            <div class="summary-data">
+              <span class="summary-value">{overallROI.toFixed(2)}x</span>
+              <span class="summary-label">ROI Geral</span>
+            </div>
           </div>
         </div>
-        <div class="summary-card card-2">
-          <div
-            class="summary-icon"
-            style="background: var(--danger-soft); color: var(--danger)"
-          >
-            <DollarSign size={20} />
-          </div>
-          <div class="summary-data">
-            <span class="summary-value">{formatCurrency(totalSpend)}</span>
-            <span class="summary-label">Investimento</span>
-          </div>
-        </div>
-        <div class="summary-card card-2">
-          <div
-            class="summary-icon"
-            style="background: var(--success-soft); color: var(--success)"
-          >
-            <BadgeDollarSign size={20} />
-          </div>
-          <div class="summary-data">
-            <span class="summary-value">{formatCurrency(totalRevenue)}</span>
-            <span class="summary-label">Receita</span>
-          </div>
-        </div>
-        <div class="summary-card card-2">
-          <div
-            class="summary-icon"
-            style="background: var(--warning-soft); color: var(--warning)"
-          >
-            <Target size={20} />
-          </div>
-          <div class="summary-data">
-            <span class="summary-value">{overallROI.toFixed(2)}x</span>
-            <span class="summary-label">ROI Geral</span>
-          </div>
-        </div>
-      </div>
 
-      {#if campaigns.length > 0}
-        <CampaignTable {campaigns} />
+        {#if campaigns.length > 0}
+          <CampaignTable {campaigns} />
+        {:else}
+          <div class="card">
+            <EmptyState
+              icon={Megaphone}
+              title="Nenhuma campanha encontrada"
+              description="Sua conta Meta está conectada, mas não há campanhas ativas ou com dados no período."
+            />
+          </div>
+        {/if}
       {:else}
         <div class="card">
           <EmptyState
             icon={Megaphone}
-            title="Nenhuma campanha sincronizada"
+            title="Meta não conectado"
             description="Conecte sua conta Meta Ads para visualizar suas campanhas aqui."
+            actionLabel="Conectar Meta"
+            onAction={() => {
+              window.location.href = `https://api.trackyflow.sbs/api/v1/meta/connect?site_id=${siteId}`;
+            }}
           />
         </div>
       {/if}
