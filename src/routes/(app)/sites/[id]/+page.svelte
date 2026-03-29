@@ -128,6 +128,8 @@
   const campaigns = Array.isArray(data.campaigns) ? data.campaigns : [];
   const metaSummary = data.metaSummary || null;
 
+  // console.log(campaigns);
+
   const metaIntegration = $derived(
     site?.integrations?.find(
       (i: any) => i.provider === "meta" && i.connected,

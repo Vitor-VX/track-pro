@@ -27,6 +27,7 @@ export type Campaign = {
   cpm: number;
   cpc: number;
   ctr: number;
+  cpa: number;
   roi: number;
 };
 

@@ -23,6 +23,7 @@
         <th>CPM</th>
         <th>CPC</th>
         <th>CTR</th>
+        <th>CPA</th>
         <th>ROI</th>
       </tr>
     </thead>
@@ -75,6 +76,10 @@
           >
           <td
             ><span class="metric-value">{(campaign.ctr ?? 0).toFixed(1)}%</span
+            ></td
+          >
+          <td
+            ><span class="metric-value">R$ {(campaign.cpa ?? 0).toFixed(2)}</span
             ></td
           >
           <td>
