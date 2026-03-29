@@ -10,6 +10,7 @@
   import EmptyState from "$lib/components/EmptyState.svelte";
   import { formatCurrency, formatNumber, formatPercentage } from "$lib/data";
   import { addToast } from "$lib/stores";
+  import { PUBLIC_URL_API } from "$env/static/public";
   import {
     Users,
     MonitorPlay,
@@ -32,12 +33,52 @@
     Target,
     Eye,
     ExternalLink,
+    Key,
   } from "lucide-svelte";
   import { formatDate } from "$lib/utils/formatDate.js";
   import type { ChartDataPoint } from "$lib/types.js";
 
   const siteId = $derived($page.params.id);
   let { data } = $props();
+
+  let showTokenModal = $state(false);
+  let accessToken = $state("");
+  let adAccountId = $state("");
+  let savingToken = $state(false);
+
+  async function saveMetaToken() {
+    if (!accessToken) {
+      addToast("Preencha todos os campos", "error");
+      return;
+    }
+
+    savingToken = true;
+    try {
+      const res = await fetch(`${PUBLIC_URL_API}/api/v1/meta/token/${siteId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${data.token}`
+        },
+        body: JSON.stringify({ accessToken }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        addToast(json.message || "Erro ao salvar token", "error");
+        return;
+      }
+
+      addToast("Meta conectado com sucesso!", "success");
+      showTokenModal = false;
+      window.location.reload();
+    } catch {
+      addToast("Erro ao conectar com Meta", "error");
+    } finally {
+      savingToken = false;
+    }
+  }
 
   function formatChartData(rawData: any[]): ChartDataPoint[] {
     if (!rawData) return [];
@@ -119,6 +160,54 @@
   }
 </script>
 
+{#if showTokenModal}
+  <div class="modal-overlay" onclick={() => (showTokenModal = false)}>
+    <div class="modal" onclick={(e) => e.stopPropagation()}>
+      <div class="modal-header">
+        <h3 class="modal-title">Conectar Meta Ads</h3>
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">
+          Para obter seu token, acesse
+          <a
+            href="https://developers.facebook.com/tools/explorer"
+            target="_blank"
+            rel="noopener"
+          >
+            Graph API Explorer
+          </a>
+          e gere um token com as permissões <strong>ads_read</strong> e
+          <strong>ads_management</strong>.
+        </p>
+        <div class="input-group mt-4">
+          <label class="input-label">Access Token</label>
+          <input
+            class="input"
+            type="password"
+            placeholder="EAAYIkP5IUTw..."
+            bind:value={accessToken}
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn btn-secondary"
+          onclick={() => (showTokenModal = false)}
+        >
+          Cancelar
+        </button>
+        <button
+          class="btn btn-primary"
+          onclick={saveMetaToken}
+          disabled={savingToken}
+        >
+          {savingToken ? "Salvando..." : "Conectar"}
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
 {#if site}
   <Header
     title={site.domain}
@@ -139,14 +228,11 @@
             {:else}
               <span class="badge badge-muted">Tracker Inativo</span>
             {/if}
-            {#if site.metaConnected}
+            {#if metaIntegration}
               <span class="badge badge-primary">
                 <PlugZap size={12} />
                 Meta Conectado
               </span>
-            {/if}
-            {#if site.pixelId}
-              <span class="badge badge-muted">Pixel: {site.pixelId}</span>
             {/if}
           </div>
         </div>
@@ -178,7 +264,16 @@
             <Megaphone size={20} />
             <span>Integração Meta Ads</span>
           </div>
-          <span class="badge badge-success">Conectado</span>
+          <div class="meta-header-actions">
+            <span class="badge badge-success">Conectado</span>
+            <button
+              class="btn btn-secondary btn-sm"
+              onclick={() => (showTokenModal = true)}
+            >
+              <Key size={14} />
+              Atualizar Token
+            </button>
+          </div>
         </div>
         <div class="meta-details">
           <div class="meta-item">
@@ -196,11 +291,9 @@
         <EmptyState
           icon={PlugZap}
           title="Meta não conectado"
-          description="Conecte sua conta Meta Ads para visualizar métricas de campanhas em tempo real."
-          actionLabel="Conectar Meta"
-          onAction={() => {
-            window.location.href = `https://api.trackyflow.sbs/api/v1/meta/connect?site_id=${siteId}`;
-          }}
+          description="Conecte sua conta Meta Ads via API Key para visualizar métricas de campanhas em tempo real."
+          actionLabel="Conectar com API Key"
+          onAction={() => (showTokenModal = true)}
         />
       </section>
     {/if}
@@ -319,14 +412,12 @@
       <div class="section-header">
         <h3 class="section-title">Campanhas Facebook Ads</h3>
         <div class="section-actions">
-          <button class="btn btn-secondary btn-sm">
-            <Filter size={16} />
-            Filtrar
-          </button>
-          <button class="btn btn-secondary btn-sm">
-            <Download size={16} />
-            Exportar
-          </button>
+          <button class="btn btn-secondary btn-sm"
+            ><Filter size={16} /> Filtrar</button
+          >
+          <button class="btn btn-secondary btn-sm"
+            ><Download size={16} /> Exportar</button
+          >
         </div>
       </div>
 
@@ -399,10 +490,8 @@
             icon={Megaphone}
             title="Meta não conectado"
             description="Conecte sua conta Meta Ads para visualizar suas campanhas aqui."
-            actionLabel="Conectar Meta"
-            onAction={() => {
-              window.location.href = `https://api.trackyflow.sbs/api/v1/meta/connect?site_id=${siteId}`;
-            }}
+            actionLabel="Conectar com API Key"
+            onAction={() => (showTokenModal = true)}
           />
         </div>
       {/if}
@@ -415,7 +504,6 @@
       </div>
     </section>
 
-    <!-- Traffic Sources -->
     <section class="traffic-section">
       <div class="card">
         <h3 class="section-title">Origem do Tráfego</h3>
@@ -499,7 +587,6 @@
     flex-wrap: wrap;
     gap: 8px;
   }
-
   .site-actions {
     display: flex;
     gap: 8px;
@@ -515,6 +602,12 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
+  }
+
+  .meta-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
   .meta-title {
@@ -550,15 +643,23 @@
     color: var(--text-strong);
   }
 
+  .modal-description {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .modal-description a {
+    color: var(--primary);
+  }
+
   .section-title {
     font-size: 1.125rem;
     margin-bottom: 20px;
   }
-
   .metrics-section {
     margin-bottom: 32px;
   }
-
   .funnel-section {
     margin-bottom: 32px;
   }
@@ -581,12 +682,6 @@
     width: 100%;
     min-width: 0;
     padding: 20px 0;
-  }
-
-  .funnel-chart-wrapper {
-    overflow: hidden;
-    width: 100%;
-    min-width: 0;
   }
 
   .campaigns-section {
@@ -648,7 +743,6 @@
   .chart-section {
     margin-bottom: 32px;
   }
-
   .traffic-section {
     margin-bottom: 32px;
   }
@@ -658,7 +752,6 @@
     flex-direction: column;
     gap: 20px;
   }
-
   .traffic-item {
     display: flex;
     flex-direction: column;
@@ -716,7 +809,6 @@
       flex-direction: column;
       align-items: flex-start;
     }
-
     .site-actions {
       width: 100%;
       justify-content: flex-start;

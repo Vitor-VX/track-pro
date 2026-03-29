@@ -46,6 +46,7 @@ export const load = async ({ fetch, params, cookies }: any) => {
     ]);
 
     return {
+        token,
         site: siteJson.data,
         metrics: metricsJson.data,
         chart: chartJson.data,
