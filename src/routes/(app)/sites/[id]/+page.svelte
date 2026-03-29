@@ -43,11 +43,11 @@
 
   let showTokenModal = $state(false);
   let accessToken = $state("");
-  let adAccountId = $state("");
+  let pixelId = $state("");
   let savingToken = $state(false);
 
   async function saveMetaToken() {
-    if (!accessToken) {
+    if (!accessToken || !pixelId) {
       addToast("Preencha todos os campos", "error");
       return;
     }
@@ -58,9 +58,9 @@
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${data.token}`
+          Authorization: `Bearer ${data.token}`,
         },
-        body: JSON.stringify({ accessToken }),
+        body: JSON.stringify({ accessToken, pixelId }),
       });
 
       const json = await res.json();
@@ -187,6 +187,18 @@
             placeholder="EAAYIkP5IUTw..."
             bind:value={accessToken}
           />
+        </div>
+        <div class="input-group mt-4">
+          <label class="input-label">Pixel ID</label>
+          <input
+            class="input"
+            type="text"
+            placeholder="875484495259675"
+            bind:value={pixelId}
+          />
+          <!-- <span style="font-size: 0.75rem; color: var(--muted);">
+            Deixe em branco para mostrar todas as campanhas
+          </span> -->
         </div>
       </div>
       <div class="modal-footer">

@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Campaign } from '$lib/types';
-  import { formatCurrency, formatNumber } from '$lib/data';
-  
+  import type { Campaign } from "$lib/types";
+  import { formatCurrency, formatNumber } from "$lib/data";
+
   interface Props {
     campaigns: Campaign[];
   }
-  
+
   let { campaigns }: Props = $props();
 </script>
 
@@ -33,25 +33,57 @@
             <span class="campaign-name">{campaign.name}</span>
           </td>
           <td>
-            {#if campaign.status === 'active'}
+            {#if campaign.status === "active"}
               <span class="badge badge-success">Ativo</span>
-            {:else if campaign.status === 'paused'}
+            {:else if campaign.status === "paused"}
               <span class="badge badge-warning">Pausado</span>
             {:else}
               <span class="badge badge-muted">Rascunho</span>
             {/if}
           </td>
-          <td><span class="metric-value">{formatNumber(campaign.clicks)}</span></td>
-          <td><span class="metric-value">{formatNumber(campaign.visits)}</span></td>
-          <td><span class="metric-value">{formatNumber(campaign.sales)}</span></td>
-          <td><span class="metric-value revenue">{formatCurrency(campaign.revenue)}</span></td>
-          <td><span class="metric-value spend">{formatCurrency(campaign.spend)}</span></td>
-          <td><span class="metric-value">R$ {campaign.cpm.toFixed(2)}</span></td>
-          <td><span class="metric-value">R$ {campaign.cpc.toFixed(2)}</span></td>
-          <td><span class="metric-value">{campaign.ctr.toFixed(1)}%</span></td>
+          <td
+            ><span class="metric-value">{formatNumber(campaign.clicks)}</span
+            ></td
+          >
+          <td
+            ><span class="metric-value">{formatNumber(campaign.visits)}</span
+            ></td
+          >
+          <td
+            ><span class="metric-value">{formatNumber(campaign.sales)}</span
+            ></td
+          >
+          <td
+            ><span class="metric-value revenue"
+              >{formatCurrency(campaign.revenue)}</span
+            ></td
+          >
+          <td
+            ><span class="metric-value spend"
+              >{formatCurrency(campaign.spend)}</span
+            ></td
+          >
+          <td
+            ><span class="metric-value"
+              >R$ {(campaign.cpm ?? 0).toFixed(2)}</span
+            ></td
+          >
+          <td
+            ><span class="metric-value"
+              >R$ {(campaign.cpc ?? 0).toFixed(2)}</span
+            ></td
+          >
+          <td
+            ><span class="metric-value">{(campaign.ctr ?? 0).toFixed(1)}%</span
+            ></td
+          >
           <td>
-            <span class="roi-badge" class:positive={campaign.roi >= 1} class:negative={campaign.roi < 1}>
-              {campaign.roi.toFixed(2)}x
+            <span
+              class="roi-badge"
+              class:positive={campaign.roi >= 1}
+              class:negative={campaign.roi < 1}
+            >
+              {(campaign.roi ?? 0).toFixed(2)}x
             </span>
           </td>
         </tr>
@@ -66,19 +98,19 @@
     color: var(--text-strong);
     white-space: nowrap;
   }
-  
+
   td .metric-value {
     font-size: 0.875rem;
   }
-  
+
   .metric-value.revenue {
     color: var(--success);
   }
-  
+
   .metric-value.spend {
     color: var(--muted);
   }
-  
+
   .roi-badge {
     display: inline-flex;
     padding: 6px 12px;
@@ -87,12 +119,12 @@
     font-weight: 600;
     font-family: var(--font-mono);
   }
-  
+
   .roi-badge.positive {
     background: var(--success-soft);
     color: var(--success);
   }
-  
+
   .roi-badge.negative {
     background: var(--danger-soft);
     color: var(--danger);
