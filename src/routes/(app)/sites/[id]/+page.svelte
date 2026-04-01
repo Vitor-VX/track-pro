@@ -410,18 +410,6 @@
       </div>
     </section>
 
-    <section class="funnel-section">
-      <div class="card-funnel">
-        <h3 class="section-title">Funil de Conversão</h3>
-        <div class="funnel-content">
-          <FunnelChart data={funnelData} />
-        </div>
-        <div class="mt-6">
-          <InsightCard insights={funnelInsights} />
-        </div>
-      </div>
-    </section>
-
     <section class="campaigns-section">
       <div class="section-header">
         <h3 class="section-title">Campanhas Facebook Ads</h3>
@@ -509,6 +497,18 @@
           />
         </div>
       {/if}
+    </section>
+
+    <section class="funnel-section">
+      <div class="card-funnel">
+        <h3 class="section-title">Funil de Conversão</h3>
+        <div class="funnel-content">
+          <FunnelChart data={funnelData} />
+        </div>
+        <div class="mt-6">
+          <InsightCard insights={funnelInsights} />
+        </div>
+      </div>
     </section>
 
     <section class="chart-section">
